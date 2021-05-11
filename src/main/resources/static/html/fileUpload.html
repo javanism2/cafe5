@@ -32,9 +32,10 @@
 					console.log(foo); //gives me the correct object
 					
 					var sound = new Howl({
+							src: [foo],
 						  autoplay: true
 						});
-						sound.src = foo;
+						
 
 				}
 			});
