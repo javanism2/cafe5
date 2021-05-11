@@ -30,10 +30,10 @@
 					binaryData.push(data); //My blob
 					var foo = URL.createObjectURL(new Blob(binaryData, {type: "audio/mpeg3"}));
 					console.log(foo); //gives me the correct object
-					
+					var url = (window.URL || window.webkitURL ).createObjectURL(foo);
+					console.log(url);
 					var sound = new Howl({
-							src: [foo],
-						  autoplay: true
+							src: [url]
 						});
 						sound.play();
 
