@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 import com.mulcam.ai.web.controller.ApplicationContextProvider;
 
@@ -63,7 +64,20 @@ public class BreakTimeTTS {
              while ((read =is.read(bytes)) != -1) {
                  outputStream.write(bytes, 0, read);
              }
-             is.close();          
+             is.close();  
+             
+             try {
+                 Path file = location.resolve("master.mp3").normalize();
+                 Resource resource = new UrlResource(file.toUri());
+
+                 if(resource.exists() || resource.isReadable()) {
+                     System.out.println("file exists ^^");
+                 }else {
+                	 System.out.println("Could not find file ㅠㅠ");
+                 }
+             } catch (Exception e) {
+            	 System.out.println("Could not download file");
+             }
              
          } else {  // 오류 발생
         	 br = new BufferedReader(new InputStreamReader(con.getErrorStream()));

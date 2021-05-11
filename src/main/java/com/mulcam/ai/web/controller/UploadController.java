@@ -70,7 +70,14 @@ public class UploadController {
 //			 System.out.println(".............."+stateResource.getURI().getRawPath());
 			
 			
-
+			String fileName = file.getOriginalFilename();
+			  Path location = this.dirLocation.resolve(fileName);
+			  try {
+			    /* 실제 파일이 upload 되는 부분 */
+			    Files.copy(file.getInputStream(), location, StandardCopyOption.REPLACE_EXISTING);
+			  } catch (IOException e) {
+			  	e.printStackTrace();
+			  }
 			 
 			
 			 File dir = new File("/upload");
