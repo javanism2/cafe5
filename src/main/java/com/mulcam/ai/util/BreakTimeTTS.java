@@ -47,7 +47,7 @@ public class BreakTimeTTS {
              System.out.println("==================>"+path_temp);
              
              // mp3 파일 생성 new File(경로, user_id + ".mp3")
-             URL r = this.getClass().getResource("../../../../../static/assets/");
+             URL r = this.getClass().getResource("../");
 
              String path = r.getPath();
              
