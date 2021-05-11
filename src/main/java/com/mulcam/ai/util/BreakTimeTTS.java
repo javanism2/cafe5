@@ -5,6 +5,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -19,7 +22,7 @@ import com.mulcam.ai.web.controller.ApplicationContextProvider;
  */
 public class BreakTimeTTS {
 
- public  void main(String breakTimeMsg, String user_id) {
+ public  void main(String breakTimeMsg, String user_id,Path location) {
      String clientId = "uf4hxtdqdo";//애플리케이션 클라이언트 아이디값";
      String clientSecret = "6G2Fc8paabdrpObsRzU6ZNRa3M5mIwWOowDYkiie";//애플리케이션 클라이언트 시크릿값";
      try {
@@ -47,14 +50,14 @@ public class BreakTimeTTS {
              int read = 0;
              byte[] bytes = new byte[1024];
              
-             ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+//             ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+//             
+// 			Resource stateResource = applicationContext.getResource("classpath:static/assets/");
              
- 			Resource stateResource = applicationContext.getResource("classpath:static/assets/");
-             System.out.println(">>>>>>>>>>>>>>"+stateResource.getURL().getPath());
-             System.out.println(".............."+stateResource.getURL().getHost());
-             System.out.println(",,,,,,,,,,,,,,"+stateResource.getDescription());
-             String path=stateResource.getURL().getPath();
-             File f = new File(path, user_id + ".mp3");
+			  
+             System.out.println(">>>>>>>>>>>>>>"+location.toString());
+           
+             File f = new File(location.toString(), user_id + ".mp3");
              f.createNewFile();
              OutputStream outputStream = new FileOutputStream(f);
              while ((read =is.read(bytes)) != -1) {

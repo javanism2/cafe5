@@ -5,11 +5,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,24 +30,48 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.mulcam.ai.FileUploadProperties;
 import com.mulcam.ai.util.BreakTimeTTS;
 
 
 @RestController
 public class UploadController {
 	
+    private final Path dirLocation;
+
+    @Autowired
+    public UploadController(FileUploadProperties fileUploadProperties) {
+        this.dirLocation = Paths.get(fileUploadProperties.getLocation())
+                .toAbsolutePath().normalize();
+        System.out.println("dirLocation:"+dirLocation);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            Path path=Files.createDirectories(this.dirLocation);
+            System.out.println("Path:"+path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
 	@PostMapping("upload")
 	public void upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
 		
 		
 		try {
-			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+//			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+//			
+//			Resource stateResource = applicationContext.getResource("classpath:static/assets/test.txt");
+//			BufferedReader readerState = new BufferedReader(new InputStreamReader(stateResource.getInputStream()));
+//
+//			System.out.println("============>"+readerState.readLine());		
+//			 System.out.println(".............."+stateResource.getURI().getRawPath());
 			
-			Resource stateResource = applicationContext.getResource("classpath:static/assets/test.txt");
-			BufferedReader readerState = new BufferedReader(new InputStreamReader(stateResource.getInputStream()));
+			
 
-			System.out.println("============>"+readerState.readLine());		
-			 System.out.println(".............."+stateResource.getURI().getRawPath());
+			 
 			
 			 File dir = new File("/upload");
 			 if(!dir.exists()) {
@@ -58,7 +88,7 @@ public class UploadController {
 			 file.transferTo(new File("/upload/"+file.getOriginalFilename()));
 
 			
-			new BreakTimeTTS().main("aaa", "bbb");
+			new BreakTimeTTS().main("fighting!!!", "master",dirLocation);
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
