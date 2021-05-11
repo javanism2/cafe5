@@ -28,7 +28,7 @@ public class UploadController {
 	
 	@PostMapping("upload")
 	public void upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
-		System.out.println(file);
+		System.out.println("============>"+file);
 		
 		try {
 			URL r = this.getClass().getResource("../../../../../static/assets/");
