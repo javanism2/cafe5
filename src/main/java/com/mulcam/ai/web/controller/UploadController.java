@@ -31,7 +31,7 @@ public class UploadController {
 		System.out.println("============>"+file);
 		
 		try {
-			URL r = this.getClass().getResource("../../../../../static/assets/");
+			URL r = this.getClass().getResource(".");
 
 			String path = r.getPath();
 			
