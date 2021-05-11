@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+
+	$(document).ready(function(){
+		let count=0;
+		
+		let timer=setInterval(function(){ 
+			navigator.getUserMedia(
+					{audio:false, video:true},
+					function(stream){						
+						const track=stream.getVideoTracks()[0];
+						let imageCapture=new ImageCapture(track);
+						imageCapture.takePhoto().then(function(photo){
+							console.log(photo);
+							const fileName = 'web_capture_'+Date.now()+'.jpg';
+							let formData = new FormData();
+							formData.append('file', photo, fileName);
+							
+							$.ajax({
+								type : 'post',
+								url : '../aws',
+								cache : false,
+								data : formData,
+								processData : false,
+								contentType : false,
+								success : function(data) {
+									console.log(data);
+									if(data=="who"){
+										alert("넌 누구냐!!!");
+									}
+								}
+							});
+						});
+						
+						
+					},
+					function(){
+						//카메라 작동 에러
+						alert("fail");
+					}
+				);
+				if(++count==2) clearInterval(timer);
+			}, 
+		5000);
+	
+	});//end ready
+</script>
+
+</head>
+<body>
+	<center>
+	
+		5초 후에 자동으로 캡쳐 됩니다
+	</center>
+	
+
+	
+</body>
+</html>

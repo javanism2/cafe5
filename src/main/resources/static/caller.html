@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+</head>
+<body>
+    <h1>화상통화</h1>
+    <div>내 화면</div>
+    <video id="localVideo" autoplay width="230px"  ></video>
+    <div>상대방 화면</div>
+    <video id="remoteVideo" autoplay width="230px"  ></video>
+    <br>
+    <button id="call">📞CALL</button>
+    
+    
+<script type="text/javascript">
+	const socket = new WebSocket('wss://192.168.219.102:8090/WebSocket2');
+	console.log("web socket conn ok");
+	
+	const sendMessage = (type,payload)=>{
+		socket.send(JSON.stringify({type:type,payload:payload}));
+		//console.log("messge send ok:"+JSON.stringify({type:type,payload:payload}));
+	};
+	
+	
+	
+	const onMessage=(type, callback)=>{
+		socket.onmessage= messageEvent => {
+			//message=JSON.parse(message);
+			//console.log(messageEvent.data.type);
+			let message=JSON.parse(messageEvent.data);
+			console.log(message.payload);
+			message.type === type && callback(message.payload);	  		
+		}			
+	};
+
+	
+	const callButton = document.getElementById('call');
+	const localVideo = document.getElementById('localVideo');
+	const remoteVideo = document.getElementById('remoteVideo');
+	
+	const configuration = {iceServers: [{
+        url: 'stun:stun.l.google.com:19302'
+    }],};
+	
+	var pc_config = {"iceServers": [{"url": "stun:stun.l.google.com:19302"},
+		  {"url":"turn:3.36.205.111:5349", "username":"jes", "credential":"jes"}]};
+	const rtcPeerConnection = new RTCPeerConnection(pc_config);
+
+	const sendSdpOffer = async () => {
+	  const rtcSessionDescriptionInit = await rtcPeerConnection.createOffer();
+	  await rtcPeerConnection.setLocalDescription(rtcSessionDescriptionInit);
+	  sendMessage('SDP', rtcSessionDescriptionInit)
+	};
+
+	const sendSdpAnswer = async () => {
+	  const rtcSessionDescriptionInit = await rtcPeerConnection.createAnswer();
+	  await rtcPeerConnection.setLocalDescription(rtcSessionDescriptionInit);
+	  sendMessage('SDP', rtcSessionDescriptionInit);
+	};
+
+	navigator.mediaDevices
+	  .getUserMedia({video: true, audio: false})
+	  .then(mediaStream => {
+	    localVideo.srcObject = mediaStream;
+	    mediaStream.getTracks().forEach(track => rtcPeerConnection.addTrack(track));
+	  });
+
+	// exchange SDP
+	rtcPeerConnection.addEventListener('negotiationneeded', () => callButton.disabled = false)
+	callButton.addEventListener('click', sendSdpOffer)
+	onMessage('SDP', async descriptionInit => {
+	  const rtcSessionDescription = new RTCSessionDescription(descriptionInit);
+	  await rtcPeerConnection.setRemoteDescription(rtcSessionDescription);
+	  if (descriptionInit.type === 'offer') {
+	    callButton.disabled = true
+	    await sendSdpAnswer();
+	  }
+	})
+
+	// exchange ICE
+	rtcPeerConnection.addEventListener('icecandidate', e => e.candidate == null || sendMessage('ICE', e.candidate));
+	onMessage('ICE', candidateInit => rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidateInit)))
+	
+	/* onMessage('ICE', candidateInit => {
+		rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidateInit), function(msg){console.log(msg)}, function(err){console.log(err)});
+	});
+ */
+	// handle remote stream
+	rtcPeerConnection.addEventListener('track', e => remoteVideo.srcObject = new MediaStream([e.track]));
+</script>
+</body>
+
+
+</html>

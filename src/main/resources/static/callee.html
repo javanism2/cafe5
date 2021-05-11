@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+	const socket = new WebSocket('wss://192.168.219.102:8090/WebSocket2');
+	console.log("web socket conn ok");
+	
+	const sendMessage = (type,payload)=>{
+		socket.send(JSON.stringify({type:type,payload:payload}));
+		//console.log("messge send ok:"+JSON.stringify({type:type,payload:payload}));
+	};
+	
+	
+	
+	const onMessage=(type, callback)=>{
+		socket.onmessage= messageEvent => {
+			//message=JSON.parse(message);
+			//console.log(messageEvent.data.type);
+			let message=JSON.parse(messageEvent.data);
+			console.log(message.type===type);
+			message.type === type && callback(message.payload);	  		
+		}			
+	};
+
+
+	
+	(async () => {
+		  const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+		  document.getElementById('localVideo').srcObject = mediaStream;
+
+		  const rtcPeerConnection = new RTCPeerConnection();
+		  mediaStream.getTracks().forEach(track => rtcPeerConnection.addTrack(track));
+
+/* 	 	  rtcPeerConnection.addEventListener('negotiationneeded', async () => {
+		    const sdpOffer = await rtcPeerConnection.createOffer();
+		    rtcPeerConnection.setLocalDescription(sdpOffer);
+		    sendMessage('SDP', sdpOffer)
+		  });   */
+		  
+		  onMessage('SDP', async sdpOffer =>{
+		  	await rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sdpOffer));
+		  	const sdpAnswer=await rtcPeerConnection.createAnswer();
+		  	await rtcPeerConnection.setLocalDescription(sdpAnswer);
+		  	sendMessage('SDP',sdpAnswer);
+		  });
+		 
+		  rtcPeerConnection.addEventListener('track', e => {
+		    document.getElementById('remoteVideo').srcObject = new MediaStream([e.track])
+		  });
+		  
+	 	  rtcPeerConnection.addEventListener('icecandidate', e => {
+			    if (e.candidate === null) return;
+			    sendMessage('ICE', e.candidate)  
+		   });
+
+		    onMessage('ICE', iceCandidate => {
+		   		rtcPeerConnection.addIceCandidate(new RTCIceCandidate(iceCandidate));
+			}); 
+		})();
+</script>
+</head>
+<body>
+	<!--내 얼굴이 나올 video 요소-->
+	<video id="localVideo" autoplay width="480px"></video>
+	<!--상대방의 얼굴이 나올 video 요소-->
+	<video id="remoteVideo" autoplay width="480px"></video>
+</body>
+</html>

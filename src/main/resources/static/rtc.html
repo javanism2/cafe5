@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+<title>PeerConnection Demo 1</title>
+<!-- Load the polyfill to switch-hit between Chrome and Firefox -->
+  <!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+//connecting to our signaling server 
+var conn = new WebSocket('wss://192.168.219.102:8090/WebSocket2');
+
+conn.onopen = function() {
+    console.log("웹소켓 연결");
+    initialize();
+};
+
+conn.onmessage = function(msg) {
+    console.log("소켓 메세지 받음", msg.data);
+    var content = JSON.parse(msg.data);
+    var data = content.data;
+    switch (content.event) {
+    // when somebody wants to call us
+    case "offer":
+        handleOffer(data);
+        break;
+    case "answer":
+        handleAnswer(data);
+        break;
+    // when a remote peer sends an ice candidate to us
+    case "candidate":
+        handleCandidate(data);
+        break;
+    default:
+        break;
+    }
+};
+
+function send(message) {
+    conn.send(JSON.stringify(message));
+    console.log("웹소켓으로 메세지 전송완료");
+}
+
+var peerConnection;
+var dataChannel;
+//var input = document.getElementById("messageInput");
+
+
+function initialize() {
+	const configuration = {iceServers: [{
+        url: 'stun:stun.l.google.com:19302'
+    }],};
+	
+	var optionalRtpDataChannels = {
+		    optional: [{
+		        RtpDataChannels: true
+		    }]
+		};
+
+    peerConnection = new RTCPeerConnection(configuration, optionalRtpDataChannels);
+    console.log("아바타 생성");
+    
+    // creating data channel
+    dataChannel = peerConnection.createDataChannel("dataChannel", { reliable: false});
+    console.log(dataChannel.readyState);
+    
+    setChannelEvents(dataChannel, 'offerer');
+    
+    // Setup ice handling
+    peerConnection.onicecandidate = function(event) {
+    	console.log("후보 등록");
+        if (event.candidate) {
+            send({
+                event : "candidate",
+                data : event.candidate
+            });
+        }
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    
+	peerConnection.ondatachannel = function (event) {
+  		console.log("채널 뚫림");
+        dataChannel = event.channel;
+        event.channel.onopen = function() {
+            console.log('채널 오픈');
+          };
+  	}; 	
+
+    
+}
+
+function setChannelEvents(channel) {
+	console.log(">>>>>>>>>>>>>>",channel);
+    channel.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        console.log("==============>",data);
+    };
+    channel.onopen = function () {
+        channel.push = channel.send;
+        channel.send = function (data) {
+        	console.log(".........>",data);
+            channel.push(JSON.stringify(data));
+        };
+    };
+
+    channel.onerror = function (e) {
+        console.error('channel.onerror', JSON.stringify(e, null, '\t'));
+    };
+
+    channel.onclose = function (e) {
+        console.warn('channel.onclose', JSON.stringify(e, null, '\t'));
+    };
+}
+
+
+
+function createOffer() {
+    peerConnection.createOffer(function(offer) {
+    	console.log("offer 생성, 전송");
+        send({
+            event : "offer",
+            data : offer
+        });
+        peerConnection.setLocalDescription(offer);
+    }, function(error) {
+        alert("Error creating an offer");
+    });
+}
+
+function handleOffer(offer) {
+    peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+    // create and send an answer to an offer
+    peerConnection.createAnswer(function(answer) {
+    	console.log("offer받음 ,답변 보냄");
+        peerConnection.setLocalDescription(answer);
+        send({
+            event : "answer",
+            data : answer
+        });
+    }, function(error) {
+        alert("Error creating an answer");
+    });
+
+};
+
+function handleCandidate(candidate) {
+	console.log("상대방 접수");
+    peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+};
+
+function handleAnswer(answer) {
+	console.log("답변 받음");
+    peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    console.log("connection established successfully!!");
+};
+
+function sendMessage(message) {
+	console.log("p2p 메세지 전송");
+    dataChannel.send(message);   
+}
+
+
+$(document).ready(function (){
+
+	$('#sendBtn').click(function(){
+		sendMessage($('#messageInput').val());
+		$('#messageInput').val("");
+	});
+
+});
+
+</script>
+<body>
+
+  <button type="button" onclick='createOffer()'>Create
+   Offer</button>
+   <br>
+
+	<input id="messageInput"><input type="button" id="sendBtn" value="전송">
+</body>
+</html>

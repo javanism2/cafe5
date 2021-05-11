@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>Client</title>
+</head>
+<body>
+    <img src="" id="result">
+    <script>
+        // get img dom element
+        //const img = document.querySelector('img');
+        
+        const WS_URL = 'ws://localhost:8090/websocket';
+        const ws = new WebSocket(WS_URL);
+        ws.binaryType = 'arraybuffer';
+        ws.onopen = () => console.log(`Connected to ${WS_URL}`);
+        ws.onmessage = message => {
+            // set the base64 string to the src tag of the image
+            //img.src = message.data;
+        	handleReceive(message);
+        }
+        
+        function handleReceive(message) {
+            
+            var c = resultCanvas = document.getElementById('result');
+            var ctx = c.getContext('2d');
+            var imageData = ctx.createImageData(200, 200);
+            var pixels = imageData.data;
+
+            var buffer = new Uint8Array(message.data);
+            for (var i=0; i < pixels.length; i++) {
+              pixels[i] = buffer[i];
+            }
+            ctx.putImageData(imageData, 0, 0);
+          }
+    </script>
+</body>
+</html>

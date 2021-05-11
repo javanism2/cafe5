@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <script>
+    var socket = null;
+
+    function bootstrap() {
+
+     
+      var c = document.getElementById('mycanvas');
+      var ctx = c.getContext('2d');
+      ctx.globalalpha = 0.3;
+      for(var i=0; i<1000; i++) {
+        ctx.beginPath();
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+        ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+        ctx.moveTo(Math.random()*200, Math.random()*200);
+        ctx.lineTo(Math.random()*200, Math.random()*200);
+        ctx.stroke();
+      }
+
+      
+      socket = new WebSocket('ws://localhost:8090/websocket');
+      socket.binaryType = 'arraybuffer';
+      socket.onopen = function() {
+        send(ctx);
+      }
+      socket.onmessage = handleReceive;
+    };
+
+    function send(ctx) {
+     
+      var data = ctx.getImageData(0, 0, 200, 200).data;
+      var byteArray = new Uint8Array(data);
+      socket.send(byteArray.buffer);
+    } 
+
+    function handleReceive(message) {
+      
+      var c = resultCanvas = document.getElementById('result');
+      var ctx = c.getContext('2d');
+      var imageData = ctx.createImageData(200, 200);
+      var pixels = imageData.data;
+
+      var buffer = new Uint8Array(message.data);
+      for (var i=0; i < pixels.length; i++) {
+        pixels[i] = buffer[i];
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+    
+    </script>
+  </head>
+  <body onload="bootstrap()">
+    <div style="width:210px;float:left;">
+      Input<br>
+      <canvas id="mycanvas" width="200" height="200"></canvas>
+    </div>
+    <div style="float:left;width:210px;">
+      Result<br>
+      <canvas id="result" width="200" height="200"></canvas>
+    </div>
+    
+    
+    
+    <br>
+    <video id="leftVideo" playsinline controls loop muted>
+        <source src="chrome.webm" type="video/webm"/>
+        <source src="chrome.mp4" type="video/mp4"/>
+        <p>This browser does not support the video element.</p>
+    </video>
+
+    <video id="rightVideo" playsinline autoplay></video>
+    
+    <br><input type="button" value="send" id="sendBtn">
+      <!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+    	$(document).ready(function(){
+    		$("#sendBtn").click(function(){
+    			socket.send($("leftVideo").attr("src"));
+    		});
+    	});
+    </script>
+  </body>
+</html>
