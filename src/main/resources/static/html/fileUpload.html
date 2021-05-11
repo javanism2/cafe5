@@ -9,20 +9,20 @@
 <script type="text/javascript">
 	
 	$(document).ready(function(){
-		/* $("#uploadBtn").click(function(){
+		 $("#uploadBtn").click(function(){
 			let formData = new FormData();
 			formData.append('file', $("#myFileInput")[0].files[0]);
 			
 			$.ajax({
 				type : 'post',
 				url : '../upload',
-				responseType: 'binary',
+				//responseType: 'binary',
 				cache : false,
 				data : formData,
 				processData : false,
 				contentType : false,
 				success : function(data) {
-					console.log(typeof(data));
+					console.log(data);
 					var audio=document.getElementById("tts");
 					audio.pause();
 					var binaryData = [];
@@ -30,12 +30,12 @@
 					var foo = URL.createObjectURL(new Blob(binaryData, {type: "audio/mpeg3"}));
 					console.log(foo); //gives me the correct object
 					
-			        audio.src = foo;
+			        audio.src = data;
 			        audio.play();
 
 				}
 			});
-		}); */
+		}); 
 	}); 
 
 </script>
@@ -43,10 +43,10 @@
 </head>
 <body>
 
-	<form action="../upload" method="post" enctype="multipart/form-data"> 
+	<!-- <form action="../upload" method="post" enctype="multipart/form-data">  -->
 		<input type="file" id="myFileInput" name="file">
 		<input type="submit" value="전송" id="uploadBtn">
-	</form> 
+<!-- 	</form>  -->
 	<br><audio src="" controls="controls" id="tts" ></audio>
 </body>
 </html>
