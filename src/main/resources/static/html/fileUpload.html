@@ -9,7 +9,7 @@
 <script type="text/javascript">
 	
 	$(document).ready(function(){
-		$("#uploadBtn").click(function(){
+		/* $("#uploadBtn").click(function(){
 			let formData = new FormData();
 			formData.append('file', $("#myFileInput")[0].files[0]);
 			
@@ -35,7 +35,7 @@
 
 				}
 			});
-		});
+		}); */
 	}); 
 
 </script>
@@ -43,10 +43,10 @@
 </head>
 <body>
 
-	<!-- <form action="../upload" method="post" enctype="multipart/form-data"> -->
+	<form action="../upload" method="post" enctype="multipart/form-data"> 
 		<input type="file" id="myFileInput" name="file">
 		<input type="submit" value="전송" id="uploadBtn">
-	<!-- </form> -->
+	</form> 
 	<br><audio src="" controls="controls" id="tts" ></audio>
 </body>
 </html>
