@@ -22,10 +22,14 @@
 				processData : false,
 				contentType : false,
 				success : function(data) {
-					console.log(data);
+					console.log(typeof(data));
 					var audio=document.getElementById("tts");
 					audio.pause();
-			        audio.src = URL.createObjectURL(data);
+					var binaryData = [];
+					binaryData.push(data); //My blob
+					var foo = URL.createObjectURL(new Blob(binaryData, {type: "audio/mpeg3"}));
+					console.log(foo); //gives me the correct object
+			        audio.src = foo;
 			        audio.play();
 
 				}
