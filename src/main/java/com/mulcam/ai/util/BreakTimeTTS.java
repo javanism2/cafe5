@@ -6,6 +6,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+
+import com.mulcam.ai.web.controller.ApplicationContextProvider;
+
 /**
  * 1. maven project 아니어도 됨
  * 2. 제공받은      String clientId 와 clientSecret 값을 넣고 바로 실행한뒤 이 프로젝트를 리프레쉬하면 임의숫자.mp3가 보임
@@ -42,19 +47,12 @@ public class BreakTimeTTS {
              int read = 0;
              byte[] bytes = new byte[1024];
              
-             File dir = new File(".");
-             String path_temp = dir.getPath();
-             String path_temp2 = dir.getCanonicalPath();
-             System.out.println("1=================>"+path_temp);
-             System.out.println("2=================>"+path_temp2);
-             
-             // mp3 파일 생성 new File(경로, user_id + ".mp3")
-             URL r = this.getClass().getResource("../");
-
-             String path = r.getPath();
-             
-             System.out.println(">>>>>>>>>>>>>>"+path);
-             
+             ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+ 			
+ 			Resource stateResource = applicationContext.getResource("classpath:static/assets");
+             System.out.println(">>>>>>>>>>>>>>"+stateResource.getURI().getPath());
+             System.out.println(".............."+stateResource.getURI().getRawPath());
+             String path=stateResource.getURI().getRawPath();
              File f = new File(path, user_id + ".mp3");
              f.createNewFile();
              OutputStream outputStream = new FileOutputStream(f);
