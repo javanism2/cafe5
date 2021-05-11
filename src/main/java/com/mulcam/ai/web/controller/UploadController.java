@@ -1,13 +1,17 @@
 package com.mulcam.ai.web.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,11 +32,16 @@ public class UploadController {
 	
 	@PostMapping("upload")
 	public void upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
-		String s= request.getSession().getServletContext().getRealPath("/") ;
-
-		System.out.println("============>"+s);
+		
 		
 		try {
+			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+			
+			Resource stateResource = applicationContext.getResource("classpath:static/test.txt");
+			BufferedReader readerState = new BufferedReader(new InputStreamReader(stateResource.getInputStream()));
+
+			System.out.println("============>"+readerState.readLine());			
+			
 			 File dir = new File("/upload");
 			 if(!dir.exists()) {
 			      //Creating the directory
