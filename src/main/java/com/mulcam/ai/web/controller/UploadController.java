@@ -112,7 +112,7 @@ public class UploadController {
 
 	        // Fallback to the default content type if type could not be determined
 	        if(contentType == null) {
-	            contentType = "application/octet-stream";
+	            contentType = "audio/mpeg3";
 	        }
 	        return ResponseEntity.ok()
 	                .contentType(MediaType.parseMediaType(contentType))

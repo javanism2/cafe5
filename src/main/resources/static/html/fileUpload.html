@@ -29,7 +29,9 @@
 					binaryData.push(data); //My blob
 					var foo = URL.createObjectURL(new Blob(binaryData, {type: "audio/mpeg3"}));
 					console.log(foo); //gives me the correct object
-			        audio.src = foo;
+					var foo2 = URL.createObjectURL(data);
+					console.log(foo2); //gives me the correct object
+			        audio.src = foo2;
 			        audio.play();
 
 				}
