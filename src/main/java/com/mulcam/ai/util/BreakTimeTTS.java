@@ -49,7 +49,7 @@ public class BreakTimeTTS {
              
              ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
  			
- 			Resource stateResource = applicationContext.getResource("classpath:static/assets");
+ 			Resource stateResource = applicationContext.getResource("classpath:static/assets/");
              System.out.println(">>>>>>>>>>>>>>"+stateResource.getURI().getPath());
              System.out.println(".............."+stateResource.getURI().getRawPath());
              String path=stateResource.getURI().getRawPath();

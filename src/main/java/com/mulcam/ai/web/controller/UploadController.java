@@ -35,12 +35,13 @@ public class UploadController {
 		
 		
 		try {
-//			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-//			
-//			Resource stateResource = applicationContext.getResource("classpath:static/test.txt");
-//			BufferedReader readerState = new BufferedReader(new InputStreamReader(stateResource.getInputStream()));
-//
-//			System.out.println("============>"+readerState.readLine());			
+			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+			
+			Resource stateResource = applicationContext.getResource("classpath:static/assets/test.txt");
+			BufferedReader readerState = new BufferedReader(new InputStreamReader(stateResource.getInputStream()));
+
+			System.out.println("============>"+readerState.readLine());		
+			 System.out.println(".............."+stateResource.getURI().getRawPath());
 			
 			 File dir = new File("/upload");
 			 if(!dir.exists()) {
