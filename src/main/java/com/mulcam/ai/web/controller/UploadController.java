@@ -18,6 +18,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,7 +61,7 @@ public class UploadController {
     }
 	
 	@PostMapping("upload")
-	public void upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
+	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
 		
 		
 		try {
@@ -95,15 +99,37 @@ public class UploadController {
 			 file.transferTo(new File("/upload/"+file.getOriginalFilename()));
 
 			
-			new BreakTimeTTS().main("fighting!!!", "master",dirLocation);
+			 Resource resource = new BreakTimeTTS().main("fighting!!!", "master",dirLocation);
+			
+			 
+
+	        String contentType = null;
+	        try {
+	            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+	        } catch (IOException ex) {
+	            System.out.println("Could not determine file type.");
+	        }
+
+	        // Fallback to the default content type if type could not be determined
+	        if(contentType == null) {
+	            contentType = "application/octet-stream";
+	        }
+	        return ResponseEntity.ok()
+	                .contentType(MediaType.parseMediaType(contentType))
+	                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+	                .body(resource);
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
+	
+	 
 	
 	public void s3upload() throws IOException {
         Regions clientRegion = Regions.AP_NORTHEAST_2;

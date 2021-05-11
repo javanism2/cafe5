@@ -22,8 +22,9 @@ import com.mulcam.ai.web.controller.ApplicationContextProvider;
  * 4. 더 긴 텍스트를 읽어서 처리하도록 응용하기
  */
 public class BreakTimeTTS {
+	Resource resource;
 
- public  void main(String breakTimeMsg, String user_id,Path location) {
+ public  Resource main(String breakTimeMsg, String user_id,Path location) {
      String clientId = "uf4hxtdqdo";//애플리케이션 클라이언트 아이디값";
      String clientSecret = "6G2Fc8paabdrpObsRzU6ZNRa3M5mIwWOowDYkiie";//애플리케이션 클라이언트 시크릿값";
      try {
@@ -67,8 +68,8 @@ public class BreakTimeTTS {
              is.close();  
              
              try {
-                 Path file = location.resolve("master.mp3").normalize();
-                 Resource resource = new UrlResource(file.toUri());
+                 Path file = location.resolve(user_id + ".mp3").normalize();
+                  resource = new UrlResource(file.toUri());
 
                  if(resource.exists() || resource.isReadable()) {
                      System.out.println("file exists ^^");
@@ -89,9 +90,11 @@ public class BreakTimeTTS {
              br.close();
              System.out.println(response.toString());
          }
+         return resource;
      } catch (Exception e) {
          System.out.println(e);
          e.printStackTrace();
+         return null;
      }
  }
 }
