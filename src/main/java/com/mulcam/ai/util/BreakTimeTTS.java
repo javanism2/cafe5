@@ -42,9 +42,11 @@ public class BreakTimeTTS {
              int read = 0;
              byte[] bytes = new byte[1024];
              
-             URL r_temp = this.getClass().getResource(".");
-             String path_temp = r_temp.getPath();
-             System.out.println("==================>"+path_temp);
+             File dir = new File(".");
+             String path_temp = dir.getPath();
+             String path_temp2 = dir.getCanonicalPath();
+             System.out.println("1=================>"+path_temp);
+             System.out.println("2=================>"+path_temp2);
              
              // mp3 파일 생성 new File(경로, user_id + ".mp3")
              URL r = this.getClass().getResource("../");
