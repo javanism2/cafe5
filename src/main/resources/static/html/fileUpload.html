@@ -16,11 +16,11 @@
 			$.ajax({
 				type : 'post',
 				url : '../upload',
-				responseType: 'blob',
+				responseType: 'binary',
 				cache : false,
 				data : formData,
-				//processData : false,
-				//contentType : false,
+				processData : false,
+				contentType : false,
 				success : function(data) {
 					console.log(typeof(data));
 					var audio=document.getElementById("tts");
