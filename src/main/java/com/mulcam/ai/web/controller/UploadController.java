@@ -31,15 +31,20 @@ public class UploadController {
 		System.out.println("============>"+file);
 		
 		try {
-			URL r = this.getClass().getResource(".");
+			 File dir = new File("/upload");
+			 if(!dir.exists()) {
+			      //Creating the directory
+			      boolean bool = dir.mkdir();
+			      if(bool){
+			         System.out.println("Directory created successfully");
+			         
+			      }else{
+			         System.out.println("Sorry couldn’t create specified directory");
+			      }
+			 }
+			 
+			 file.transferTo(new File("/upload/"+file.getOriginalFilename()));
 
-			String path = r.getPath();
-			
-			System.out.println(">>>>>>>>>>>>>>"+path);
-
-
-			
-			file.transferTo(new File(path+"a.jpg"));//+file.getOriginalFilename()));
 			
 			new BreakTimeTTS().main("aaa", "bbb");
 		} catch (IllegalStateException e) {
