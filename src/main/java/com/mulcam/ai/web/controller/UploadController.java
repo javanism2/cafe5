@@ -28,7 +28,8 @@ public class UploadController {
 	
 	@PostMapping("upload")
 	public void upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
-		System.out.println("============>"+file);
+		String s=request.getServletContext().getRealPath(".");
+		System.out.println("============>"+s);
 		
 		try {
 			 File dir = new File("/upload");
