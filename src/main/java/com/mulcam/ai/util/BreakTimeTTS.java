@@ -48,11 +48,12 @@ public class BreakTimeTTS {
              byte[] bytes = new byte[1024];
              
              ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
- 			
+             
  			Resource stateResource = applicationContext.getResource("classpath:static/assets/");
-             System.out.println(">>>>>>>>>>>>>>"+stateResource.getURI().getPath());
-             System.out.println(".............."+stateResource.getURI().getRawPath());
-             String path=stateResource.getURI().getRawPath();
+             System.out.println(">>>>>>>>>>>>>>"+stateResource.getURL().getPath());
+             System.out.println(".............."+stateResource.getURL().getHost());
+             System.out.println(",,,,,,,,,,,,,,"+stateResource.getDescription());
+             String path=stateResource.getDescription();
              File f = new File(path, user_id + ".mp3");
              f.createNewFile();
              OutputStream outputStream = new FileOutputStream(f);
