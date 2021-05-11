@@ -16,14 +16,18 @@
 			$.ajax({
 				type : 'post',
 				url : '../upload',
+				responseType: 'blob',
 				cache : false,
 				data : formData,
 				processData : false,
 				contentType : false,
 				success : function(data) {
 					console.log(data);
-					$("#tts").attr('src',data);
-					$("#tts").attr('autoplay','autoplay');
+					var audio=document.getElementById("tts");
+					audio.pause();
+			        audio.src = URL.createObjectURL(data);
+			        audio.play();
+
 				}
 			});
 		});
