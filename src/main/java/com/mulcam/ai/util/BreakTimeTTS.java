@@ -53,7 +53,7 @@ public class BreakTimeTTS {
              System.out.println(">>>>>>>>>>>>>>"+stateResource.getURL().getPath());
              System.out.println(".............."+stateResource.getURL().getHost());
              System.out.println(",,,,,,,,,,,,,,"+stateResource.getDescription());
-             String path=stateResource.getDescription();
+             String path=stateResource.getURL().getPath();
              File f = new File(path, user_id + ".mp3");
              f.createNewFile();
              OutputStream outputStream = new FileOutputStream(f);
