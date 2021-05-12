@@ -25,7 +25,10 @@
 				success : function(data) {
 					console.log(data);
 					var sound = document.getElementById("tts");
-					 sound.src="../assets/master.mp3";
+					var blobURL = window.URL.createObjectURL(data);
+					console.log(blobURL);
+					sound.src = blobURL;
+					// sound.src="../assets/master.mp3";
 					 sound.load(); 
 					sound.play();
 
