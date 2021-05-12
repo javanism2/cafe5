@@ -125,7 +125,7 @@ public class UploadController {
 //	                .body(resource);
 	        FileInputStream signedFileInputStream = new FileInputStream(resource.getFile().getAbsolutePath());
 	        byte[] doc = IOUtils.toByteArray(signedFileInputStream);
-	        byte[] encodedAudio = Base64.encodeBase64(doc);
+	        String encodedAudio = Base64.encodeBase64String(doc);
 	        
 	        JSONObject o=new JSONObject();
 	        o.put("base64audio", encodedAudio);
