@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js" integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ==" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		//var blob = "blob:null/5fa0fa6d-0b2a-4be6-a762-c81e4bf88f0d";
+		//var url = (window.URL || window.webkitURL ).createObjectURL(blob);
+		var sound = document.getElementById("tts");
+		 sound.src="../assets/test.mp3";
+		 sound.load(); 
+		sound.play();
+	}); 
+
+</script>
+
+</head>
+<body>
+
+	<!-- <form action="../upload" method="post" enctype="multipart/form-data">  -->
+		<input type="file" id="myFileInput" name="file">
+		<input type="submit" value="전송" id="uploadBtn">
+<!-- 	</form>  -->
+	<br><audio src="" controls="controls" id="tts" ></audio>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

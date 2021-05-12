@@ -24,18 +24,10 @@
 				contentType : false,
 				success : function(data) {
 					console.log(data);
-					var audio=document.getElementById("tts");
-					audio.pause();
-					var binaryData = [];
-					binaryData.push(data); //My blob
-					var foo = URL.createObjectURL(new Blob(binaryData, {type: "audio/mpeg3"}));
-					console.log(foo); //gives me the correct object
-					var url = (window.URL || window.webkitURL ).createObjectURL(foo);
-					console.log(url);
-					var sound = new Howl({
-							src: [url]
-						});
-						sound.play();
+					var sound = document.getElementById("tts");
+					 sound.src="../assets/master.mp3";
+					 sound.load(); 
+					sound.play();
 
 				}
 			});
