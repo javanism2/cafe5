@@ -23,14 +23,9 @@
 				processData : false,
 				contentType : false,
 				success : function(data) {
-					console.log(data.type);
-					var sound = document.getElementById("tts");
-					//var blobURL = window.URL.createObjectURL(data);
-					//console.log(blobURL);
-					sound.src = data;
-					// sound.src="../assets/master.mp3";
-					 sound.load(); 
-					sound.play();
+					console.log(data);
+					var snd = new Audio("data:audio/wav;base64," + data);
+					snd.play();
 
 				}
 			});

@@ -2,6 +2,7 @@ package com.mulcam.ai.web.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -15,6 +16,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -34,8 +37,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
 import com.mulcam.ai.FileUploadProperties;
 import com.mulcam.ai.util.BreakTimeTTS;
+
 
 
 @RestController
@@ -61,7 +66,7 @@ public class UploadController {
     }
 	
 	@PostMapping("upload")
-	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
+	public String upload(@RequestParam("file") MultipartFile file,HttpServletRequest request) {
 		
 		
 		try {
@@ -114,10 +119,18 @@ public class UploadController {
 	        if(contentType == null) {
 	            contentType = "audio/mpeg3";
 	        }
-	        return ResponseEntity.ok()
-	                .contentType(MediaType.parseMediaType(contentType))
-	                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-	                .body(resource);
+//	        return ResponseEntity.ok()
+//	                .contentType(MediaType.parseMediaType(contentType))
+//	                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+//	                .body(resource);
+	        FileInputStream signedFileInputStream = new FileInputStream(resource.getFile().getAbsolutePath());
+	        byte[] doc = IOUtils.toByteArray(signedFileInputStream);
+	        byte[] encodedAudio = Base64.encodeBase64(doc);
+	        
+	        JSONObject o=new JSONObject();
+	        o.put("base64audio", encodedAudio);
+	        
+	        return o.toJSONString();
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
