@@ -24,7 +24,9 @@
 				contentType : false,
 				success : function(data) {
 					console.log(data);
-					var snd = new Audio("data:audio/wav;base64," + data);
+					data=JSON.parse(data);
+					console.log(data);
+					var snd = new Audio("data:audio/mp3;base64," + data.base64audio);
 					snd.play();
 
 				}
