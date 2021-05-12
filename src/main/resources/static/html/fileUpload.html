@@ -17,7 +17,7 @@
 			$.ajax({
 				type : 'post',
 				url : '../upload',
-				//responseType: 'binary',
+				responseType: 'binary',
 				cache : false,
 				data : formData,
 				processData : false,
@@ -25,9 +25,9 @@
 				success : function(data) {
 					console.log(data);
 					var sound = document.getElementById("tts");
-					var blobURL = window.URL.createObjectURL(data);
-					console.log(blobURL);
-					sound.src = blobURL;
+					//var blobURL = window.URL.createObjectURL(data);
+					//console.log(blobURL);
+					sound.srcObject = data;
 					// sound.src="../assets/master.mp3";
 					 sound.load(); 
 					sound.play();
