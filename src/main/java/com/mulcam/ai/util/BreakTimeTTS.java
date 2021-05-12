@@ -72,7 +72,9 @@ public class BreakTimeTTS {
                   resource = new UrlResource(file.toUri());
 
                  if(resource.exists() || resource.isReadable()) {
-                     System.out.println("file exists ^^");
+                     System.out.println("file exists ^^:" + file);
+                     System.out.println("file exists **:" + file.toUri());
+                     System.out.println("file exists ==:" + resource.getFilename());
                  }else {
                 	 System.out.println("Could not find file ㅠㅠ");
                  }
